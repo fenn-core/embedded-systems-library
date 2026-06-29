@@ -23,8 +23,8 @@ void draw_rect(ssd1306_spi_t *display,uint8_t x1, uint8_t y1, uint8_t x2, uint8_
 
 void draw_rect_filled(ssd1306_spi_t *display, uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2);
 
-//void draw_char(ssd1306_spi_t *display,uint8_t x, uint8_t y, char letter);
+void draw_char(ssd1306_spi_t *display,uint8_t x, uint8_t y, char letter);
 
-//void draw_string(ssd1306_spi_t *display, uint8_t x, uint8_t y, const char *str);
+void draw_string(ssd1306_spi_t *display, uint8_t x, uint8_t y, const char *str);
 
 #endif /* INC_GRAPHICS_H_ */

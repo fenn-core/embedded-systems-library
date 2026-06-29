@@ -10,9 +10,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
-// #include <string.h>
+#include <string.h>
 
-//extern const uint8_t font5x7[][FONT5X7_WIDTH];
+extern const uint8_t font5x7[][FONT5X7_WIDTH];
 
 void bouncing_pixel_128x64(ssd1306_spi_t *display, uint8_t x, uint8_t y, uint8_t delay, uint32_t animation_time){
 	 uint32_t start_time = HAL_GetTick();
@@ -123,34 +123,34 @@ void draw_rect_filled(ssd1306_spi_t *display, int16_t x1, int16_t y1, int16_t x2
     }
 }
 
-//void draw_char(ssd1306_spi_t *display, uint8_t x, uint8_t y, char letter){
-//	if ((' ' <= letter) &&(letter <= '~')){
-//		uint8_t index = letter - ' ';
-//		const uint8_t *glyph = font5x7[index];
-//		for (uint8_t col = 0; col < 5; ++col){
-//			uint8_t column_byte = *glyph;
-//			glyph++;
-//			for (uint8_t row = 0; row < 7; ++row){
-//				if ((column_byte >> row) & 1){
-//					draw_pixel(display, x + col, y + row, true);
-//				}
-//			}
-//		}
-//	}
-//}
+void draw_char(ssd1306_spi_t *display, uint8_t x, uint8_t y, char letter){
+	if ((' ' <= letter) &&(letter <= '~')){
+		uint8_t index = letter - ' ';
+		const uint8_t *glyph = font5x7[index];
+		for (uint8_t col = 0; col < 5; ++col){
+			uint8_t column_byte = *glyph;
+			glyph++;
+			for (uint8_t row = 0; row < 7; ++row){
+				if ((column_byte >> row) & 1){
+					draw_pixel(display, x + col, y + row, true);
+				}
+			}
+		}
+	}
+}
 
-//void draw_string(ssd1306_spi_t *display, uint8_t x, uint8_t y, const char *str){
-//	uint8_t iteration_count = 0;
-//	while (1){
-//		if (*str == '\0'){
-//			break;
-//		}
-//		uint8_t x_offset = iteration_count * 6;
-//		draw_char(display, x + x_offset, y , *str);
-//		iteration_count++;
-//		str++;
-//	}
-//}
+void draw_string(ssd1306_spi_t *display, uint8_t x, uint8_t y, const char *str){
+	uint8_t iteration_count = 0;
+	while (1){
+		if (*str == '\0'){
+			break;
+		}
+		uint8_t x_offset = iteration_count * 6;
+		draw_char(display, x + x_offset, y , *str);
+		iteration_count++;
+		str++;
+	}
+}
 
 
 
