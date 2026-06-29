@@ -13,31 +13,31 @@
 
 
 static void hardware_reset(ssd1306_spi_t *display){
-	HAL_GPIO_WritePin(display->rst_port, display->rst_pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(display->config.rst_port, display->config.rst_pin, GPIO_PIN_RESET);
 	HAL_Delay(10);
-	HAL_GPIO_WritePin(display->rst_port, display->rst_pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(display->config.rst_port, display->config.rst_pin, GPIO_PIN_SET);
 	HAL_Delay(10);
 }
 
 static void send_spi_command(ssd1306_spi_t *display, uint8_t cmd){
-	HAL_GPIO_WritePin(display->cs_port, display->cs_pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(display->dc_port, display->dc_pin, GPIO_PIN_RESET);
-	HAL_SPI_Transmit(display->handle, &cmd, 1, HAL_MAX_DELAY);
-	HAL_GPIO_WritePin(display->cs_port, display->cs_pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(display->config.cs_port, display->config.cs_pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(display->config.dc_port, display->config.dc_pin, GPIO_PIN_RESET);
+	HAL_SPI_Transmit(display->config.handle, &cmd, 1, SSD1306_MAX_DELAY);
+	HAL_GPIO_WritePin(display->config.cs_port, display->config.cs_pin, GPIO_PIN_SET);
 }
 
 static void send_spi_data(ssd1306_spi_t *display, uint8_t data){
-	HAL_GPIO_WritePin(display->cs_port, display->cs_pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(display->dc_port, display->dc_pin, GPIO_PIN_SET);
-	HAL_SPI_Transmit(display->handle, &data, 1, HAL_MAX_DELAY);
-	HAL_GPIO_WritePin(display->cs_port, display->cs_pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(display->config.cs_port, display->config.cs_pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(display->config.dc_port, display->config.dc_pin, GPIO_PIN_SET);
+	HAL_SPI_Transmit(display->config.handle, &data, 1, SSD1306_MAX_DELAY);
+	HAL_GPIO_WritePin(display->config.cs_port, display->config.cs_pin, GPIO_PIN_SET);
 }
 
 static void send_spi_framebuffer(ssd1306_spi_t *display, uint8_t *data, uint32_t length){
-	HAL_GPIO_WritePin(display->cs_port, display->cs_pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(display->dc_port, display->dc_pin, GPIO_PIN_SET);
-	HAL_SPI_Transmit(display->handle, data, length, HAL_MAX_DELAY);
-	HAL_GPIO_WritePin(display->cs_port, display->cs_pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(display->config.cs_port, display->config.cs_pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(display->config.dc_port, display->config.dc_pin, GPIO_PIN_SET);
+	HAL_SPI_Transmit(display->config.handle, data, length, SSD1306_MAX_DELAY);
+	HAL_GPIO_WritePin(display->config.cs_port, display->config.cs_pin, GPIO_PIN_SET);
 }
 
 static void ssd1306_set_full_window(ssd1306_spi_t *display){
@@ -60,16 +60,7 @@ void ssd1306_clear_buffer(ssd1306_spi_t *display){
 	memset(display->framebuffer, 0x00, SSD1306_BUFFER_SIZE);
 }
 
-void ssd1306_init(ssd1306_spi_t *display, ssd1306_spi_config_t *config){
-	display->handle = config->handle;
-	display->cs_pin = config->cs_pin;
-	display->cs_port = config->cs_port;
-	display->dc_pin = config->dc_pin;
-	display->dc_port = config->dc_port;
-	display->rst_pin = config->rst_pin;
-	display->rst_port = config->rst_port;
-
-
+void ssd1306_init(ssd1306_spi_t *display){
 	hardware_reset(display);
 	send_spi_command(display, 0xAE); // display off
 
@@ -119,8 +110,9 @@ void ssd1306_init(ssd1306_spi_t *display, ssd1306_spi_config_t *config){
 	send_spi_command(display, 0xAF); // display on
 }
 
-void draw_pixel(ssd1306_spi_t *display, uint8_t x, uint8_t y, bool state){
-	if (128 > x && 64 > y){
+void draw_pixel(ssd1306_spi_t *display, int16_t x, int16_t y, bool state){
+	if (x >= 0 && x < 128 &&
+	    y >= 0 && y < 64) {
 		uint8_t page = (y / 8);
 		uint16_t buffer_index = (page * 128) + x;
 		uint8_t bit_position = (y % 8);
