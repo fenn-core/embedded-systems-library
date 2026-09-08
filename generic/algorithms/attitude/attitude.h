@@ -9,6 +9,7 @@
 #define INC_ATTITUDE_H_
 
 #include <stdbool.h>
+#include "vec3f.h"
 
 
 typedef enum{

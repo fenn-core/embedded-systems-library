@@ -1,6 +1,6 @@
-typedef struct{
+typedef struct {
     float x;
     float y;
     float z;
 
-}vec3f_t;
+} vec3f_t;
