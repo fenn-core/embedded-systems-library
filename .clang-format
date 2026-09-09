@@ -1,39 +1,43 @@
 BasedOnStyle: LLVM
-
 Language: Cpp
-Standard: c99
+
+ColumnLimit: 90
 
 IndentWidth: 4
+ContinuationIndentWidth: 4
 TabWidth: 4
 UseTab: Never
 
-ColumnLimit: 100
-
-BreakBeforeBraces: Attach
-AllowShortBlocksOnASingleLine: Never
+BreakBeforeBraces: Allman
+IndentCaseLabels: false
 AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLoopsOnASingleLine: false
 
-SpaceBeforeParens: ControlStatements
 PointerAlignment: Right
+DerivePointerAlignment: false
 
-AlignConsecutiveAssignments: Consecutive
-AlignConsecutiveDeclarations: Consecutive
-
-BinPackArguments: false
-BinPackParameters: false
-
-AllowAllArgumentsOnNextLine: true
-AllowAllParametersOfDeclarationOnNextLine: true
-
-SortIncludes: CaseSensitive
-IncludeBlocks: Regroup
-
-KeepEmptyLinesAtTheStartOfBlocks: false
-MaxEmptyLinesToKeep: 1
+BinPackParameters: BinPack
+BinPackArguments: true
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowAllArgumentsOnNextLine: false
 
 BreakBeforeBinaryOperators: None
-BreakBeforeTernaryOperators: true
+AlignOperands: DontAlign
 
-Cpp11BracedListStyle: true
+MaxEmptyLinesToKeep: 2
+SeparateDefinitionBlocks: Leave
+
+SortIncludes:
+  Enabled: true
+  IgnoreCase: false
+
+IncludeBlocks: Merge
+
+IncludeCategories:
+  - Regex: '^<'
+    Priority: -1
+  - Regex: '^"vendor/'
+    Priority: 2
+  - Regex: '^"'
+    Priority: 1

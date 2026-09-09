@@ -1,8 +1,8 @@
 #ifndef INC_STM32G474_H_
 #define INC_STM32G474_H_
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 
 typedef enum
@@ -71,16 +71,9 @@ typedef enum
 } gpio_af_t;
 
 
-void gpio_init(
-    gpio_port_t port,
-    uint8_t pin,
-    gpio_mode_t mode,
-    gpio_output_type_t output_type,
-    gpio_speed_t output_speed,
-    gpio_pull_t pull,
-    gpio_af_t af,
-    bool lock
-);
+void gpio_init(gpio_port_t port, uint8_t pin, gpio_mode_t mode,
+               gpio_output_type_t output_type, gpio_speed_t output_speed,
+               gpio_pull_t pull, gpio_af_t af, bool lock);
 
 
 #endif
