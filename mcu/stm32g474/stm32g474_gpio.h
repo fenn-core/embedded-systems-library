@@ -76,4 +76,7 @@ void gpio_init(gpio_port_t port, uint8_t pin, gpio_mode_t mode,
                gpio_pull_t pull, gpio_af_t af, bool lock);
 
 
+bool gpio_lock(gpio_port_t port, uint16_t pin_mask);
+
+
 #endif

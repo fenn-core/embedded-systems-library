@@ -4,6 +4,28 @@
 #include "vendor/Device/ST/STM32G4xx/Include/stm32g474xx.h"
 
 
+static GPIO_TypeDef *gpio_port_selector(gpio_port_t port)
+{
+    switch (port)
+    {
+    case GPIO_PORT_A:
+        return GPIOA;
+    case GPIO_PORT_B:
+        return GPIOB;
+    case GPIO_PORT_C:
+        return GPIOC;
+    case GPIO_PORT_D:
+        return GPIOD;
+    case GPIO_PORT_E:
+        return GPIOE;
+    case GPIO_PORT_F:
+        return GPIOF;
+    case GPIO_PORT_G:
+        return GPIOG;
+    }
+}
+
+
 static void gpio_config_mode(GPIO_TypeDef *port_reg, uint8_t pin, gpio_mode_t mode)
 {
     port_reg->MODER =
@@ -12,7 +34,7 @@ static void gpio_config_mode(GPIO_TypeDef *port_reg, uint8_t pin, gpio_mode_t mo
 
 
 static void gpio_config_output_type(GPIO_TypeDef *port_reg, uint8_t pin,
-                                  gpio_output_type_t output_type)
+                                    gpio_output_type_t output_type)
 {
     port_reg->OTYPER =
         (port_reg->OTYPER & (~(1UL << pin)) | ((uint32_t)output_type << pin));
@@ -20,7 +42,7 @@ static void gpio_config_output_type(GPIO_TypeDef *port_reg, uint8_t pin,
 
 
 static void gpio_config_output_speed(GPIO_TypeDef *port_reg, uint8_t pin,
-                                   gpio_speed_t speed)
+                                     gpio_speed_t speed)
 {
     port_reg->OSPEEDR =
         ((port_reg->OSPEEDR & ~(3UL << (pin * 2))) | ((uint32_t)speed << (pin * 2)));
@@ -59,35 +81,10 @@ static void gpio_config_af(GPIO_TypeDef *port_reg, uint8_t pin, gpio_af_t af)
 
 
 void gpio_pin_config(gpio_port_t port, uint8_t pin, gpio_mode_t mode,
-               gpio_output_type_t output_type, gpio_speed_t output_speed,
-               gpio_pull_t pull, gpio_af_t af)
+                     gpio_output_type_t output_type, gpio_speed_t output_speed,
+                     gpio_pull_t pull, gpio_af_t af)
 {
-    GPIO_TypeDef *port_reg;
-
-    switch (port)
-    {
-    case GPIO_PORT_A:
-        port_reg = GPIOA;
-        break;
-    case GPIO_PORT_B:
-        port_reg = GPIOB;
-        break;
-    case GPIO_PORT_C:
-        port_reg = GPIOC;
-        break;
-    case GPIO_PORT_D:
-        port_reg = GPIOD;
-        break;
-    case GPIO_PORT_E:
-        port_reg = GPIOE;
-        break;
-    case GPIO_PORT_F:
-        port_reg = GPIOF;
-        break;
-    case GPIO_PORT_G:
-        port_reg = GPIOG;
-        break;
-    }
+    GPIO_TypeDef *port_reg = gpio_port_selector(port);
 
     gpio_config_mode(port_reg, pin, mode);
     gpio_config_output_type(port_reg, pin, output_type);
@@ -96,3 +93,18 @@ void gpio_pin_config(gpio_port_t port, uint8_t pin, gpio_mode_t mode,
     gpio_config_af(port_reg, pin, af);
 }
 
+
+bool gpio_lock(gpio_port_t port, uint16_t pin_mask)
+{
+    GPIO_TypeDef *port_reg = gpio_port_selector(port);
+
+    if (pin_mask & GPIO_LCKR_LCKK_Msk)
+    {
+        return false;
+    }
+    port_reg->LCKR = GPIO_LCKR_LCKK_Msk | (uint32_t)pin_mask;
+    port_reg->LCKR = (uint32_t)pin_mask;
+    port_reg->LCKR = GPIO_LCKR_LCKK_Msk | (uint32_t)pin_mask;
+
+    return (port_reg->LCKR & GPIO_LCKR_LCKK_Msk) != 0U;
+}
