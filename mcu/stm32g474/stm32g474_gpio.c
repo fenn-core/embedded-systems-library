@@ -4,14 +4,14 @@
 #include "vendor/Device/ST/STM32G4xx/Include/stm32g474xx.h"
 
 
-static void gpio_init_mode(GPIO_TypeDef *port_reg, uint8_t pin, gpio_mode_t mode)
+static void gpio_config_mode(GPIO_TypeDef *port_reg, uint8_t pin, gpio_mode_t mode)
 {
     port_reg->MODER =
         ((port_reg->MODER & ~(3UL << (pin * 2))) | ((uint32_t)mode << (pin * 2)));
 }
 
 
-static void gpio_init_output_type(GPIO_TypeDef *port_reg, uint8_t pin,
+static void gpio_config_output_type(GPIO_TypeDef *port_reg, uint8_t pin,
                                   gpio_output_type_t output_type)
 {
     port_reg->OTYPER =
@@ -19,7 +19,7 @@ static void gpio_init_output_type(GPIO_TypeDef *port_reg, uint8_t pin,
 }
 
 
-static void gpio_init_output_speed(GPIO_TypeDef *port_reg, uint8_t pin,
+static void gpio_config_output_speed(GPIO_TypeDef *port_reg, uint8_t pin,
                                    gpio_speed_t speed)
 {
     port_reg->OSPEEDR =
@@ -27,14 +27,14 @@ static void gpio_init_output_speed(GPIO_TypeDef *port_reg, uint8_t pin,
 }
 
 
-static void gpio_init_pull(GPIO_TypeDef *port_reg, uint8_t pin, gpio_pull_t pull)
+static void gpio_config_pull(GPIO_TypeDef *port_reg, uint8_t pin, gpio_pull_t pull)
 {
     port_reg->PUPDR =
         ((port_reg->PUPDR & ~(3UL << (pin * 2))) | ((uint32_t)pull << (pin * 2)));
 }
 
 
-static void gpio_init_af(GPIO_TypeDef *port_reg, uint8_t pin, gpio_af_t af)
+static void gpio_config_af(GPIO_TypeDef *port_reg, uint8_t pin, gpio_af_t af)
 {
     uint8_t idx;
     uint8_t shift;
@@ -58,23 +58,9 @@ static void gpio_init_af(GPIO_TypeDef *port_reg, uint8_t pin, gpio_af_t af)
 }
 
 
-static void gpio_init_lock(GPIO_TypeDef *port_reg, uint8_t pin, bool lock)
-{
-    if (lock)
-    {
-        port_reg->LCKR = ((port_reg->LCKR & ~(1U << GPIO_LCKR_LCKK_Pos)) |
-                          (((port_reg->LCKR >> pin) & 1U) ^ 1U) << GPIO_LCKR_LCKK_Pos);
-        port_reg->LCKR = ((port_reg->LCKR & ~(1U << GPIO_LCKR_LCKK_Pos)) |
-                          (((port_reg->LCKR >> pin) & 1U) ^ 0U) << GPIO_LCKR_LCKK_Pos);
-        port_reg->LCKR = ((port_reg->LCKR & ~(1U << GPIO_LCKR_LCKK_Pos)) |
-                          (((port_reg->LCKR >> pin) & 1U) ^ 1U) << GPIO_LCKR_LCKK_Pos);
-    }
-}
-
-
-void gpio_init(gpio_port_t port, uint8_t pin, gpio_mode_t mode,
+void gpio_pin_config(gpio_port_t port, uint8_t pin, gpio_mode_t mode,
                gpio_output_type_t output_type, gpio_speed_t output_speed,
-               gpio_pull_t pull, gpio_af_t af, bool lock)
+               gpio_pull_t pull, gpio_af_t af)
 {
     GPIO_TypeDef *port_reg;
 
@@ -103,10 +89,10 @@ void gpio_init(gpio_port_t port, uint8_t pin, gpio_mode_t mode,
         break;
     }
 
-    gpio_init_mode(port_reg, pin, mode);
-    gpio_init_output_type(port_reg, pin, output_type);
-    gpio_init_output_speed(port_reg, pin, output_speed);
-    gpio_init_pull(port_reg, pin, pull);
-    gpio_init_af(port_reg, pin, af);
-    gpio_init_lock(port_reg, pin, lock);
+    gpio_config_mode(port_reg, pin, mode);
+    gpio_config_output_type(port_reg, pin, output_type);
+    gpio_config_output_speed(port_reg, pin, output_speed);
+    gpio_config_pull(port_reg, pin, pull);
+    gpio_config_af(port_reg, pin, af);
 }
+
