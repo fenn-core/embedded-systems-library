@@ -71,12 +71,21 @@ typedef enum
 } gpio_af_t;
 
 
-void gpio_init(gpio_port_t port, uint8_t pin, gpio_mode_t mode,
-               gpio_output_type_t output_type, gpio_speed_t output_speed,
-               gpio_pull_t pull, gpio_af_t af, bool lock);
+void gpio_pin_config(gpio_port_t port, uint8_t pin, gpio_mode_t mode,
+                     gpio_output_type_t output_type, gpio_speed_t output_speed,
+                     gpio_pull_t pull, gpio_af_t af);
 
 
 bool gpio_lock(gpio_port_t port, uint16_t pin_mask);
+
+
+bool gpio_read(gpio_port_t port, uint8_t pin);
+
+
+bool gpio_get_output_latch(gpio_port_t port, uint8_t pin);
+
+
+void gpio_write(gpio_port_t port, uint8_t pin, bool state);
 
 
 #endif

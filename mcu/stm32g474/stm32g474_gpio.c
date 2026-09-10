@@ -108,3 +108,32 @@ bool gpio_lock(gpio_port_t port, uint16_t pin_mask)
 
     return (port_reg->LCKR & GPIO_LCKR_LCKK_Msk) != 0U;
 }
+
+
+bool gpio_read(gpio_port_t port, uint8_t pin)
+{
+    GPIO_TypeDef *port_reg = gpio_port_selector(port);
+    return ((port_reg->IDR >> pin) & 1UL) != 0;
+}
+
+
+bool gpio_get_output_latch(gpio_port_t port, uint8_t pin)
+{
+    GPIO_TypeDef *port_reg = gpio_port_selector(port);
+    return ((port_reg->ODR >> pin) & 1UL) != 0;
+}
+
+
+void gpio_write(gpio_port_t port, uint8_t pin, bool state)
+{
+    GPIO_TypeDef *port_reg = gpio_port_selector(port);
+    if (state)
+    {
+        port_reg->BSRR = 1UL << pin;
+    }
+    else
+    {
+        port_reg->BSRR = 1UL << (pin + 16U);
+    }
+
+}
