@@ -30,6 +30,8 @@ typedef enum
 {
     GPIO_OUTPUT_PUSH_PULL = 0,
     GPIO_OUTPUT_OPEN_DRAIN = 1,
+
+    GPIO_OUTPUT_NONE = 2,
 } gpio_output_type_t;
 
 
@@ -39,6 +41,8 @@ typedef enum
     GPIO_MEDIUM_SPEED = 1,
     GPIO_HIGH_SPEED = 2,
     GPIO_VERY_HIGH_SPEED = 3,
+
+    GPIO_SPEED_NONE = 4,
 } gpio_speed_t;
 
 
@@ -68,6 +72,8 @@ typedef enum
     GPIO_AF13 = 13,
     GPIO_AF14 = 14,
     GPIO_AF15 = 15,
+
+    GPIO_AF_NONE = 16,
 } gpio_af_t;
 
 

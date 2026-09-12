@@ -87,10 +87,16 @@ void gpio_pin_config(gpio_port_t port, uint8_t pin, gpio_mode_t mode,
     GPIO_TypeDef *port_reg = gpio_port_selector(port);
 
     gpio_config_mode(port_reg, pin, mode);
-    gpio_config_output_type(port_reg, pin, output_type);
-    gpio_config_output_speed(port_reg, pin, output_speed);
+    if (output_type != GPIO_OUTPUT_NONE) {
+        gpio_config_output_type(port_reg, pin, output_type);
+    }
+    if (output_speed != GPIO_SPEED_NONE) {
+        gpio_config_output_speed(port_reg, pin, output_speed);
+    }
     gpio_config_pull(port_reg, pin, pull);
-    gpio_config_af(port_reg, pin, af);
+    if (af != GPIO_AF_NONE) {
+        gpio_config_af(port_reg, pin, af);
+    }
 }
 
 
