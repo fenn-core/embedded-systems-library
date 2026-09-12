@@ -76,7 +76,7 @@ static void gpio_config_af(GPIO_TypeDef *port_reg, uint8_t pin, gpio_af_t af)
         return;
     }
 
-    port_reg->AFR[idx] = ((port_reg->AFR & ~(15U << shift)) | ((uint32_t)af << shift));
+    port_reg->AFR[idx] = ((port_reg->AFR[idx] & ~(15U << shift)) | ((uint32_t)af << shift));
 }
 
 
