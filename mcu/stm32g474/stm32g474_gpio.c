@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include "stm32g474_types.h"
 #include "stm32g474_gpio.h"
 #include "vendor/Device/ST/STM32G4xx/Include/stm32g474xx.h"
 

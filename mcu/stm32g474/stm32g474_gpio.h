@@ -7,18 +7,6 @@
 
 typedef enum
 {
-    GPIO_PORT_A = 0,
-    GPIO_PORT_B = 1,
-    GPIO_PORT_C = 2,
-    GPIO_PORT_D = 3,
-    GPIO_PORT_E = 4,
-    GPIO_PORT_F = 5,
-    GPIO_PORT_G = 6,
-} gpio_port_t;
-
-
-typedef enum
-{
     GPIO_MODE_INPUT = 0,
     GPIO_MODE_OUTPUT = 1,
     GPIO_MODE_ALTERNATE = 2,
