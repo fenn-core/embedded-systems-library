@@ -76,7 +76,8 @@ static void gpio_config_af(GPIO_TypeDef *port_reg, uint8_t pin, gpio_af_t af)
         return;
     }
 
-    port_reg->AFR[idx] = ((port_reg->AFR[idx] & ~(15U << shift)) | ((uint32_t)af << shift));
+    port_reg->AFR[idx] =
+        ((port_reg->AFR[idx] & ~(15U << shift)) | ((uint32_t)af << shift));
 }
 
 
@@ -87,14 +88,17 @@ void gpio_pin_config(gpio_port_t port, uint8_t pin, gpio_mode_t mode,
     GPIO_TypeDef *port_reg = gpio_port_selector(port);
 
     gpio_config_mode(port_reg, pin, mode);
-    if (output_type != GPIO_OUTPUT_NONE) {
+    if (output_type != GPIO_OUTPUT_NONE)
+    {
         gpio_config_output_type(port_reg, pin, output_type);
     }
-    if (output_speed != GPIO_SPEED_NONE) {
+    if (output_speed != GPIO_SPEED_NONE)
+    {
         gpio_config_output_speed(port_reg, pin, output_speed);
     }
     gpio_config_pull(port_reg, pin, pull);
-    if (af != GPIO_AF_NONE) {
+    if (af != GPIO_AF_NONE)
+    {
         gpio_config_af(port_reg, pin, af);
     }
 }
@@ -141,5 +145,4 @@ void gpio_write(gpio_port_t port, uint8_t pin, bool state)
     {
         port_reg->BSRR = 1UL << (pin + 16U);
     }
-
 }
