@@ -1,2 +1,5 @@
 vendor/** linguist-vendored
 **/vendor/** linguist-vendored
+mcu/*/vendor/** linguist-vendored
+mcu/*/linker/vendor/** linguist-vendored
+mcu/*/startup/vendor/** linguist-vendored
