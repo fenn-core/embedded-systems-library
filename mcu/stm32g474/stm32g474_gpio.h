@@ -1,5 +1,5 @@
-#ifndef INC_STM32G474_H_
-#define INC_STM32G474_H_
+#ifndef INC_STM32G474_GPIO_H_
+#define INC_STM32G474_GPIO_H_
 
 #include <stdbool.h>
 #include <stdint.h>
