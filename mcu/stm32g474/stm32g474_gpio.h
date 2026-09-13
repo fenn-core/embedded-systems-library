@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "stm32g474_types.h"
 
 
 typedef enum
