@@ -5,7 +5,7 @@
 #include "vendor/Device/ST/STM32G4xx/Include/stm32g474xx.h"
 
 
-static GPIO_TypeDef *gpio_port_selector(gpio_port_t port)
+static GPIO_TypeDef *gpio_get_reg(gpio_port_t port)
 {
     switch (port)
     {
@@ -86,7 +86,7 @@ void gpio_pin_config(gpio_port_t port, uint8_t pin, gpio_mode_t mode,
                      gpio_output_type_t output_type, gpio_speed_t output_speed,
                      gpio_pull_t pull, gpio_af_t af)
 {
-    GPIO_TypeDef *port_reg = gpio_port_selector(port);
+    GPIO_TypeDef *port_reg = gpio_get_reg(port);
 
     gpio_config_mode(port_reg, pin, mode);
     if (output_type != GPIO_OUTPUT_NONE)
@@ -107,7 +107,7 @@ void gpio_pin_config(gpio_port_t port, uint8_t pin, gpio_mode_t mode,
 
 bool gpio_lock(gpio_port_t port, uint16_t pin_mask)
 {
-    GPIO_TypeDef *port_reg = gpio_port_selector(port);
+    GPIO_TypeDef *port_reg = gpio_get_reg(port);
 
     if (pin_mask & GPIO_LCKR_LCKK_Msk)
     {
@@ -123,21 +123,21 @@ bool gpio_lock(gpio_port_t port, uint16_t pin_mask)
 
 bool gpio_read(gpio_port_t port, uint8_t pin)
 {
-    GPIO_TypeDef *port_reg = gpio_port_selector(port);
+    GPIO_TypeDef *port_reg = gpio_get_reg(port);
     return ((port_reg->IDR >> pin) & 1UL) != 0;
 }
 
 
 bool gpio_get_output_latch(gpio_port_t port, uint8_t pin)
 {
-    GPIO_TypeDef *port_reg = gpio_port_selector(port);
+    GPIO_TypeDef *port_reg = gpio_get_reg(port);
     return ((port_reg->ODR >> pin) & 1UL) != 0;
 }
 
 
 void gpio_write(gpio_port_t port, uint8_t pin, bool state)
 {
-    GPIO_TypeDef *port_reg = gpio_port_selector(port);
+    GPIO_TypeDef *port_reg = gpio_get_reg(port);
     if (state)
     {
         port_reg->BSRR = 1UL << pin;
