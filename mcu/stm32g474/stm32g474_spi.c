@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include "stm32g474_spi.h"
 #include "stm32g474_gpio.h"
 #include "stm32g474_rcc.h"
@@ -113,4 +114,11 @@ void spi_config(spi_instance_t instance, spi_role_t role, spi_mode_t mode,
     spi_config_direction(spi_reg, direction);
 
     spi_reg->CR1 |= SPI_CR1_SPE;
+}
+
+
+bool spi_is_busy(spi_instance_t instance)
+{
+    SPI_TypeDef *spi_reg = spi_get_reg(instance);
+    return (spi_reg->SR & SPI_SR_BSY) != 0U;
 }

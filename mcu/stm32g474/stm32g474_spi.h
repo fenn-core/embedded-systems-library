@@ -1,6 +1,9 @@
 #ifndef INC_STM32G474_SPI_H_
 #define INC_STM32G474_SPI_H_
 
+#include <stdbool.h>
+#include "stm32g474_types.h"
+
 
 typedef enum
 {
@@ -71,6 +74,14 @@ typedef enum
     SPI_DIRECTION_1LINE_TX = 3,
     SPI_DIRECTION_1LINE_RX = 4,
 } spi_direction_t;
+
+
+void spi_config(spi_instance_t instance, spi_role_t role, spi_mode_t mode,
+                spi_baud_t baud, spi_bit_order_t bit_order, spi_data_size_t data_size,
+                spi_nss_t nss, spi_direction_t direction);
+
+
+bool spi_is_busy(spi_instance_t instance);
 
 
 #endif
