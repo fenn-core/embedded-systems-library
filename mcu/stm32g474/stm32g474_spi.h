@@ -84,4 +84,8 @@ void spi_config(spi_instance_t instance, spi_role_t role, spi_mode_t mode,
 bool spi_is_busy(spi_instance_t instance);
 
 
+void spi_transfer_blocking(spi_instance_t instance, const void *tx, void *rx,
+                           size_t frames);
+
+
 #endif

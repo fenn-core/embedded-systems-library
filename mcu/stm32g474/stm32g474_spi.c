@@ -1,7 +1,6 @@
+#include <stddef.h>
 #include <stdbool.h>
 #include "stm32g474_spi.h"
-#include "stm32g474_gpio.h"
-#include "stm32g474_rcc.h"
 #include "stm32g474_types.h"
 #include "vendor/Device/ST/STM32G4xx/Include/stm32g474xx.h"
 
@@ -121,4 +120,51 @@ bool spi_is_busy(spi_instance_t instance)
 {
     SPI_TypeDef *spi_reg = spi_get_reg(instance);
     return (spi_reg->SR & SPI_SR_BSY) != 0U;
+}
+
+
+void spi_transfer_blocking(spi_instance_t instance, const void *tx, void *rx,
+                           size_t frames)
+{
+    SPI_TypeDef *spi_reg = spi_get_reg(instance);
+
+    const uint16_t *tx_16 = tx;
+    uint16_t *rx_16 = rx;
+    const uint8_t *tx_8 = tx;
+    uint8_t *rx_8 = rx;
+
+    if (((spi_reg->CR2 >> SPI_CR2_DS_Pos) & 15U) > 7)
+    {
+        for (size_t i = 0; i < frames; ++i)
+        {
+            while (!(spi_reg->SR & SPI_SR_TXE))
+            {
+            }
+            spi_reg->DR = tx_16[i];
+
+            while (!(spi_reg->SR & SPI_SR_RXNE))
+            {
+            }
+            rx_16[i] = spi_reg->DR;
+        }
+    }
+    else
+    {
+        for (size_t i = 0; i < frames; ++i)
+        {
+            while (!(spi_reg->SR & SPI_SR_TXE))
+            {
+            }
+            spi_reg->DR = tx_8[i];
+
+            while (!(spi_reg->SR & SPI_SR_RXNE))
+            {
+            }
+            rx_8[i] = spi_reg->DR;
+        }
+    }
+    
+    while (spi_reg->SR & SPI_SR_BSY)
+    {
+    }
 }
