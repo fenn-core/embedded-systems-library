@@ -42,17 +42,17 @@ static void spi_config_baud(SPI_TypeDef *spi_reg, spi_baud_t baud)
 }
 
 
-static void spi_config_bit_order(SPI_TypeDef *spi_reg, spi_bit_order_t order)
+static void spi_config_bit_order(SPI_TypeDef *spi_reg, spi_bit_order_t bit_order)
 {
-    spi_reg->CR1 =
-        ((spi_reg->CR1 & ~SPI_CR1_LSBFIRST) | ((uint32_t)order << SPI_CR1_LSBFIRST_Pos));
+    spi_reg->CR1 = ((spi_reg->CR1 & ~SPI_CR1_LSBFIRST) |
+                    ((uint32_t)bit_order << SPI_CR1_LSBFIRST_Pos));
 }
 
 
-static void spi_config_data_size(SPI_TypeDef *spi_reg, spi_data_size_t size)
+static void spi_config_data_size(SPI_TypeDef *spi_reg, spi_data_size_t data_size)
 {
-    spi_reg->CR2 =
-        ((spi_reg->CR2 & ~(15UL << SPI_CR2_DS_Pos)) | ((uint32_t)size) << SPI_CR2_DS_Pos);
+    spi_reg->CR2 = ((spi_reg->CR2 & ~(15UL << SPI_CR2_DS_Pos)) |
+                    ((uint32_t)data_size) << SPI_CR2_DS_Pos);
 }
 
 
@@ -89,4 +89,28 @@ static void spi_config_direction(SPI_TypeDef *spi_reg, spi_direction_t direction
              (SPI_CR1_BIDIMODE | SPI_CR1_RXONLY));
         break;
     }
+}
+
+
+void spi_config(spi_instance_t instance, spi_role_t role, spi_mode_t mode,
+                spi_baud_t baud, spi_bit_order_t bit_order, spi_data_size_t data_size,
+                spi_nss_t nss, spi_direction_t direction)
+{
+    SPI_TypeDef *spi_reg = spi_get_reg(instance);
+
+    while (spi_reg->SR & SPI_SR_BSY)
+    {
+    }
+
+    spi_reg->CR1 &= ~SPI_CR1_SPE;
+
+    spi_config_role(spi_reg, role);
+    spi_config_mode(spi_reg, mode);
+    spi_config_baud(spi_reg, baud);
+    spi_config_bit_order(spi_reg, bit_order);
+    spi_config_data_size(spi_reg, data_size);
+    spi_config_nss(spi_reg, nss);
+    spi_config_direction(spi_reg, direction);
+
+    spi_reg->CR1 |= SPI_CR1_SPE;
 }
