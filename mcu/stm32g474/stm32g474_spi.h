@@ -53,7 +53,6 @@ typedef enum
     SPI_DATA_SIZE_14_BIT = 13,
     SPI_DATA_SIZE_15_BIT = 14,
     SPI_DATA_SIZE_16_BIT = 15,
-
 } spi_data_size_t;
 
 
