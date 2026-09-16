@@ -1,5 +1,6 @@
-#include <stddef.h>
 #include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 #include "stm32g474_spi.h"
 #include "stm32g474_types.h"
 #include "vendor/Device/ST/STM32G4xx/Include/stm32g474xx.h"
@@ -38,7 +39,7 @@ static void spi_config_mode(SPI_TypeDef *spi_reg, spi_mode_t mode)
 static void spi_config_baud(SPI_TypeDef *spi_reg, spi_baud_t baud)
 {
     spi_reg->CR1 =
-        ((spi_reg->CR1 & ~(7UL << SPI_CR1_BR_Pos)) | ((uint32_t)baud << SPI_CR1_BR_Pos));
+        ((spi_reg->CR1 & ~SPI_CR1_BR_Msk) | ((uint32_t)baud << SPI_CR1_BR_Pos));
 }
 
 
@@ -51,8 +52,8 @@ static void spi_config_bit_order(SPI_TypeDef *spi_reg, spi_bit_order_t bit_order
 
 static void spi_config_data_size(SPI_TypeDef *spi_reg, spi_data_size_t data_size)
 {
-    spi_reg->CR2 = ((spi_reg->CR2 & ~(15UL << SPI_CR2_DS_Pos)) |
-                    ((uint32_t)data_size) << SPI_CR2_DS_Pos);
+    spi_reg->CR2 =
+        ((spi_reg->CR2 & ~SPI_CR2_DS_Msk) | ((uint32_t)data_size) << SPI_CR2_DS_Pos);
 }
 
 
@@ -86,9 +87,16 @@ static void spi_config_direction(SPI_TypeDef *spi_reg, spi_direction_t direction
     case SPI_DIRECTION_1LINE_RX:
         spi_reg->CR1 =
             ((spi_reg->CR1 & ~(SPI_CR1_BIDIMODE | SPI_CR1_BIDIOE | SPI_CR1_RXONLY)) |
-             (SPI_CR1_BIDIMODE | SPI_CR1_RXONLY));
+             SPI_CR1_BIDIMODE);
         break;
     }
+}
+
+
+bool spi_is_busy(spi_instance_t instance)
+{
+    SPI_TypeDef *spi_reg = spi_get_reg(instance);
+    return (spi_reg->SR & SPI_SR_BSY) != 0U;
 }
 
 
@@ -98,7 +106,7 @@ void spi_config(spi_instance_t instance, spi_role_t role, spi_mode_t mode,
 {
     SPI_TypeDef *spi_reg = spi_get_reg(instance);
 
-    while (spi_reg->SR & SPI_SR_BSY)
+    while (spi_is_busy(instance))
     {
     }
 
@@ -116,13 +124,6 @@ void spi_config(spi_instance_t instance, spi_role_t role, spi_mode_t mode,
 }
 
 
-bool spi_is_busy(spi_instance_t instance)
-{
-    SPI_TypeDef *spi_reg = spi_get_reg(instance);
-    return (spi_reg->SR & SPI_SR_BSY) != 0U;
-}
-
-
 void spi_transfer_blocking(spi_instance_t instance, const void *tx, void *rx,
                            size_t frames)
 {
@@ -133,19 +134,32 @@ void spi_transfer_blocking(spi_instance_t instance, const void *tx, void *rx,
     const uint8_t *tx_8 = tx;
     uint8_t *rx_8 = rx;
 
-    if (((spi_reg->CR2 >> SPI_CR2_DS_Pos) & 15U) > 7)
+    if ((((spi_reg->CR2 & SPI_CR2_DS_Msk) >> SPI_CR2_DS_Pos) > 7))
     {
         for (size_t i = 0; i < frames; ++i)
         {
             while (!(spi_reg->SR & SPI_SR_TXE))
             {
             }
-            spi_reg->DR = tx_16[i];
-
+            if (tx == NULL)
+            {
+                *(volatile uint16_t *)&spi_reg->DR = 0xFFFF;
+            }
+            else
+            {
+                *(volatile uint16_t *)&spi_reg->DR = tx_16[i];
+            }
             while (!(spi_reg->SR & SPI_SR_RXNE))
             {
             }
-            rx_16[i] = spi_reg->DR;
+            if (rx == NULL)
+            {
+                (void)*(volatile uint16_t *)&spi_reg->DR;
+            }
+            else
+            {
+                *(volatile uint16_t *)&rx_16[i] = spi_reg->DR;
+            }
         }
     }
     else
@@ -155,16 +169,29 @@ void spi_transfer_blocking(spi_instance_t instance, const void *tx, void *rx,
             while (!(spi_reg->SR & SPI_SR_TXE))
             {
             }
-            spi_reg->DR = tx_8[i];
-
+            if (tx == NULL)
+            {
+                *(volatile uint8_t *)&spi_reg->DR = 0xFF;
+            }
+            else
+            {
+                *(volatile uint8_t *)&spi_reg->DR = tx_8[i];
+            }
             while (!(spi_reg->SR & SPI_SR_RXNE))
             {
             }
-            rx_8[i] = spi_reg->DR;
+            if (rx == NULL)
+            {
+                (void)*(volatile uint8_t *)&spi_reg->DR;
+            }
+            else
+            {
+                rx_8[i] = *(volatile uint8_t *)&spi_reg->DR;
+            }
         }
     }
-    
-    while (spi_reg->SR & SPI_SR_BSY)
+
+    while (spi_is_busy(instance))
     {
     }
 }
