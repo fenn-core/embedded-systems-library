@@ -82,25 +82,23 @@ static void gpio_config_af(GPIO_TypeDef *port_reg, uint8_t pin, gpio_af_t af)
 }
 
 
-void gpio_pin_config(gpio_port_t port, uint8_t pin, gpio_mode_t mode,
-                     gpio_output_type_t output_type, gpio_speed_t output_speed,
-                     gpio_pull_t pull, gpio_af_t af)
+void gpio_pin_config(const gpio_config_t *config)
 {
-    GPIO_TypeDef *port_reg = gpio_get_reg(port);
+    GPIO_TypeDef *port_reg = gpio_get_reg(config->port);
 
-    gpio_config_mode(port_reg, pin, mode);
-    if (output_type != GPIO_OUTPUT_NONE)
+    gpio_config_mode(port_reg, config->pin, config->mode);
+    if (config->output_type != GPIO_OUTPUT_NONE)
     {
-        gpio_config_output_type(port_reg, pin, output_type);
+        gpio_config_output_type(port_reg, config->pin, config->output_type);
     }
-    if (output_speed != GPIO_SPEED_NONE)
+    if (config->output_speed != GPIO_SPEED_NONE)
     {
-        gpio_config_output_speed(port_reg, pin, output_speed);
+        gpio_config_output_speed(port_reg, config->pin, config->output_speed);
     }
-    gpio_config_pull(port_reg, pin, pull);
-    if (af != GPIO_AF_NONE)
+    gpio_config_pull(port_reg, config->pin, config->pull);
+    if (config->af != GPIO_AF_NONE)
     {
-        gpio_config_af(port_reg, pin, af);
+        gpio_config_af(port_reg, config->pin, config->af);
     }
 }
 

@@ -66,9 +66,19 @@ typedef enum
 } gpio_af_t;
 
 
-void gpio_pin_config(gpio_port_t port, uint8_t pin, gpio_mode_t mode,
-                     gpio_output_type_t output_type, gpio_speed_t output_speed,
-                     gpio_pull_t pull, gpio_af_t af);
+typedef struct
+{
+    gpio_port_t port;
+    uint8_t pin;
+    gpio_mode_t mode;
+    gpio_output_type_t output_type;
+    gpio_speed_t output_speed;
+    gpio_pull_t pull;
+    gpio_af_t af;
+} gpio_config_t;
+
+
+void gpio_pin_config(gpio_config_t *config);
 
 
 bool gpio_lock(gpio_port_t port, uint16_t pin_mask);
