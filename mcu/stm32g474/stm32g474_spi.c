@@ -100,9 +100,7 @@ bool spi_is_busy(spi_instance_t instance)
 }
 
 
-void spi_config(spi_instance_t instance, spi_role_t role, spi_mode_t mode,
-                spi_baud_t baud, spi_bit_order_t bit_order, spi_data_size_t data_size,
-                spi_nss_t nss, spi_direction_t direction)
+void spi_config(spi_instance_t instance, const spi_config_t *config)
 {
     SPI_TypeDef *spi_reg = spi_get_reg(instance);
 
@@ -112,13 +110,13 @@ void spi_config(spi_instance_t instance, spi_role_t role, spi_mode_t mode,
 
     spi_reg->CR1 &= ~SPI_CR1_SPE;
 
-    spi_config_role(spi_reg, role);
-    spi_config_mode(spi_reg, mode);
-    spi_config_baud(spi_reg, baud);
-    spi_config_bit_order(spi_reg, bit_order);
-    spi_config_data_size(spi_reg, data_size);
-    spi_config_nss(spi_reg, nss);
-    spi_config_direction(spi_reg, direction);
+    spi_config_role(spi_reg, config->role);
+    spi_config_mode(spi_reg, config->mode);
+    spi_config_baud(spi_reg, config->baud);
+    spi_config_bit_order(spi_reg, config->bit_order);
+    spi_config_data_size(spi_reg, config->data_size);
+    spi_config_nss(spi_reg, config->nss);
+    spi_config_direction(spi_reg, config->direction);
 
     spi_reg->CR1 |= SPI_CR1_SPE;
 }

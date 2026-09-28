@@ -76,9 +76,19 @@ typedef enum
 } spi_direction_t;
 
 
-void spi_config(spi_instance_t instance, spi_role_t role, spi_mode_t mode,
-                spi_baud_t baud, spi_bit_order_t bit_order, spi_data_size_t data_size,
-                spi_nss_t nss, spi_direction_t direction);
+typedef struct
+{
+    spi_role_t role;
+    spi_mode_t mode;
+    spi_baud_t baud;
+    spi_bit_order_t bit_order;
+    spi_data_size_t data_size;
+    spi_nss_t nss;
+    spi_direction_t direction;
+} spi_config_t;
+
+
+void spi_config(spi_instance_t instance, const spi_config_t *config);
 
 
 bool spi_is_busy(spi_instance_t instance);
