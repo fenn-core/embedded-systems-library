@@ -78,7 +78,7 @@ typedef struct
 } gpio_config_t;
 
 
-void gpio_pin_config(gpio_config_t *config);
+void gpio_pin_config(const gpio_config_t *config);
 
 
 bool gpio_lock(gpio_port_t port, uint16_t pin_mask);
